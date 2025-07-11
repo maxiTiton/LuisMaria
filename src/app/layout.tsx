@@ -13,7 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="es">
       <body className="bg-black text-white font-sans min-h-screen flex flex-col transition-colors duration-300">
         <Navbar />
-        <main className="flex-1 flex flex-col items-center justify-center px-4 md:px-0">
+        <main className="flex-1">
           {children}
         </main>
         <Footer />

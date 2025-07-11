@@ -4,7 +4,7 @@ export default function ContactoSection() {
   return (
     <section id="contacto" className="min-h-[40vh] bg-black flex flex-col items-center justify-center px-4 py-20 border-b-4 border-b-[#b08a5a] animate-fade-in">
       <h2 className="text-4xl md:text-5xl font-serif font-extrabold text-white mb-8 drop-shadow-xl text-center">Contacto</h2>
-      <div className="flex flex-col gap-6 items-center bg-black/80 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-[#b08a5a]">
+      <div className="flex flex-col gap-6 items-center bg-black/80 backdrop-blur-xl rounded-3xl p-10 shadow-2xl border border-[#b08a5a] w-full">
         <a
           href="https://wa.me/+5493584307111"
           target="_blank"

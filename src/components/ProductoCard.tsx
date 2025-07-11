@@ -7,6 +7,10 @@ const categoriaToImg: Record<string, string> = {
   torta: '/images/torta.png',
   helado: '/images/helado.png',
   tostadas: '/images/tostadas.png',
+  // Variaciones para ser más flexible
+  helados: '/images/helado.png',
+  tortas: '/images/torta.png',
+  cafes: '/images/cafe.png',
 };
 
 export default function ProductoCard({ producto }: { producto: any }) {
@@ -25,7 +29,28 @@ export default function ProductoCard({ producto }: { producto: any }) {
     setTimeout(() => setAgregado(false), 1200);
   };
 
-  const imgSrc = producto.imagen || categoriaToImg[producto.categoria?.toLowerCase?.()] || '/images/cafe.png';
+  // Lógica mejorada para encontrar la imagen
+  const getImageSrc = (categoria: string) => {
+    if (producto.imagen) return producto.imagen;
+    
+    const categoriaLower = categoria?.toLowerCase() || '';
+    
+    // Buscar coincidencia exacta primero
+    if (categoriaToImg[categoriaLower]) {
+      return categoriaToImg[categoriaLower];
+    }
+    
+    // Buscar coincidencia parcial
+    for (const [key, value] of Object.entries(categoriaToImg)) {
+      if (categoriaLower.includes(key) || key.includes(categoriaLower)) {
+        return value;
+      }
+    }
+    
+    return '/images/cafe.png'; // Imagen por defecto
+  };
+
+  const imgSrc = getImageSrc(producto.categoria);
 
   return (
     <div className="bg-black border border-[#b08a5a] rounded-3xl shadow-2xl p-6 flex flex-col items-center gap-6 transition-all hover:scale-105 hover:shadow-lg duration-300 group">

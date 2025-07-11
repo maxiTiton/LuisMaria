@@ -36,8 +36,8 @@ export default function CarritoPage() {
     `%0ATotal: $${total}`;
 
   return (
-    <main className="min-h-screen bg-[#f8f5f2] px-4 py-12 font-serif animate-fade-in">
-      <div className="max-w-2xl mx-auto mb-8">
+    <main className="min-h-screen bg-[#f8f5f2] py-12 font-serif animate-fade-in">
+      <div className="w-full mb-8">
         <Link href="/" className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#b08a5a] to-[#6d4c2b] text-white font-semibold shadow hover:from-[#e2d6c2] hover:to-[#b08a5a] hover:text-[#6d4c2b] transition mb-4 font-serif">
           <FaArrowLeft /> Volver al inicio
         </Link>
@@ -47,7 +47,7 @@ export default function CarritoPage() {
         <p className="text-center text-[#b08a5a] text-lg font-semibold">Tu carrito está vacío.</p>
       ) : (
         <>
-          <div className="flex flex-col gap-4 max-w-2xl mx-auto">
+          <div className="flex flex-col gap-4 w-full">
             {carrito.map((item) => (
               <CarritoItem key={item._id} item={item} onQuitar={handleQuitar} />
             ))}

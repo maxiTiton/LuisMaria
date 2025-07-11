@@ -47,9 +47,9 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-black/95 backdrop-blur-md shadow-lg flex items-center justify-between px-8 py-3 sticky top-0 z-50 border-b border-[#b08a5a] animate-fade-in">
       <a href="#inicio" onClick={e => handleSectionClick(e, '#inicio')} className="flex items-center cursor-pointer group">
-        <Image src="/logo.png" alt="Logo" width={80} height={80} className="rounded-full border-2 border-[#b08a5a] shadow-lg group-hover:scale-105 transition-transform duration-300 bg-black" />
+        <Image src="/logo.png" alt="Logo" width={80} height={80} className="shadow-lg group-hover:scale-105 transition-transform duration-300 bg-black" />
       </a>
-      <div className="hidden md:flex gap-8 items-center">
+      <div className="hidden md:flex gap-4 items-center">
         {sectionLinks.map(link => (
           <a
             key={link.href}
@@ -60,6 +60,14 @@ export default function Navbar() {
             {link.label}
           </a>
         ))}
+        <a
+          href="https://growbrands.net/neworder/luis-maria-italia-inicio/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative font-semibold text-lg px-3 py-1 rounded-xl text-white hover:text-[#b08a5a] hover:bg-black/60 transition-all duration-200 shadow-sm focus:text-[#b08a5a] cursor-pointer font-serif"
+        >
+          Carta
+        </a>
         <Link href="/carrito" className="relative font-semibold text-lg px-3 py-1 rounded-xl text-white hover:text-[#b08a5a] hover:bg-black/60 transition-all duration-200 shadow-sm font-serif">
           Carrito
         </Link>
