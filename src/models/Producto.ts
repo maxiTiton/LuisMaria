@@ -6,6 +6,7 @@ const ProductoSchema = new Schema({
   imagen: { type: String },
   precio: { type: Number, required: true },
   categoria: { type: String },
+  habilitado: { type: Boolean, default: true },
 });
 
 export default models.Producto || mongoose.model('Producto', ProductoSchema); 

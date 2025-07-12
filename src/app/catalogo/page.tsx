@@ -78,9 +78,11 @@ export default function CatalogoPage() {
     }
   }, [searchParams]);
 
+  // Solo mostrar productos habilitados
+  const productosHabilitados = productos.filter(producto => producto.habilitado !== false);
   const productosFiltrados = categoriaFiltro === '' 
-    ? productos 
-    : productos.filter(producto => producto.categoria === categoriaFiltro);
+    ? productosHabilitados 
+    : productosHabilitados.filter(producto => producto.categoria === categoriaFiltro);
 
   return (
     <main className={`min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900${carritoAbierto ? ' pr-80' : ''}`}>
