@@ -1,6 +1,6 @@
 "use client";
 import InicioSection from '../components/InicioSection';
-import ProductosSection from '../components/ProductosSection';
+import CategoriasSection from '../components/CategoriasSection';
 import NosotrosSection from '../components/NosotrosSection';
 import ContactoSection from '../components/ContactoSection';
 import UbicacionSection from '../components/UbicacionSection';
@@ -9,7 +9,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-[#f8f5f2] font-serif animate-fade-in">
       <InicioSection />
-      <ProductosSection />
+      <CategoriasSection />
       <NosotrosSection />
       <ContactoSection />
       <UbicacionSection />

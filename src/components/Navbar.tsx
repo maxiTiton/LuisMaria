@@ -68,8 +68,8 @@ export default function Navbar() {
         >
           Carta
         </a>
-        <Link href="/carrito" className="relative font-semibold text-lg px-3 py-1 rounded-xl text-white hover:text-[#b08a5a] hover:bg-black/60 transition-all duration-200 shadow-sm font-serif">
-          Carrito
+        <Link href="/catalogo" className="relative font-semibold text-lg px-3 py-1 rounded-xl text-white hover:text-[#b08a5a] hover:bg-black/60 transition-all duration-200 shadow-sm font-serif">
+          Catálogo
         </Link>
         <Link href="/admin" className="relative font-semibold text-lg px-3 py-1 rounded-xl text-white hover:text-[#b08a5a] hover:bg-black/60 transition-all duration-200 shadow-sm font-serif">
           Admin
