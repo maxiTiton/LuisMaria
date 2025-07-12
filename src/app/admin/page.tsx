@@ -20,12 +20,16 @@ export default function AdminPage() {
   const [filtroCategoria, setFiltroCategoria] = useState('Todos');
   const [busqueda, setBusqueda] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [successProductId, setSuccessProductId] = useState<string | null>(null);
   const [cargandoProductos, setCargandoProductos] = useState(false);
 
   // Cargar productos de la API (extrae a función para reutilizar)
   const fetchProductos = async () => {
     setCargandoProductos(true);
     setError('');
+    setSuccess('');
+    setSuccessProductId(null);
     try {
       const res = await fetch('/api/productos');
       const data = await res.json();
@@ -73,6 +77,7 @@ export default function AdminPage() {
     if (!nuevo.nombre || !nuevo.precio || !nuevo.categoria) return;
     setLoading(true);
     setError('');
+    setSuccess('');
     try {
       const res = await fetch('/api/productos', {
         method: 'POST',
@@ -87,6 +92,9 @@ export default function AdminPage() {
       // Recargar productos
       const data = await res.json();
       setProductos(prev => [...prev, data.producto]);
+      setSuccess('Producto agregado correctamente');
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => setSuccess(''), 3000);
     } catch (e) {
       setError('Error al agregar producto');
     } finally {
@@ -121,6 +129,8 @@ export default function AdminPage() {
   const handleGuardar = async (id: string) => {
     setLoading(true);
     setError('');
+    setSuccess('');
+    setSuccessProductId(null);
     try {
       const res = await fetch(`/api/productos/${id}`, {
         method: 'PUT',
@@ -135,6 +145,13 @@ export default function AdminPage() {
       setProductos(productos.map(p => p._id === id ? data.producto : p));
       setEditandoId(null);
       setEditado({ nombre: '', precio: '', categoria: '' });
+      setSuccess('Producto editado correctamente');
+      setSuccessProductId(id);
+      // Limpiar mensaje después de 3 segundos
+      setTimeout(() => {
+        setSuccess('');
+        setSuccessProductId(null);
+      }, 3000);
     } catch (e) {
       setError('Error al editar producto');
     } finally {
@@ -262,6 +279,7 @@ export default function AdminPage() {
                 <tbody>
                   {productosFiltrados.map(prod => {
                     const estaHabilitado = prod.habilitado !== false;
+                    const mostrarExito = successProductId === prod._id;
                     return (
                       <tr key={prod._id} className={`bg-stone-900/80 ${!estaHabilitado ? 'opacity-50' : ''}`}> 
                         {editandoId === prod._id ? (
@@ -300,6 +318,7 @@ export default function AdminPage() {
                             <td className="py-2 px-4 text-center flex flex-col gap-1 items-center justify-center">
                               {prod.nombre}
                               {!estaHabilitado && <span className="text-xs text-red-400 font-bold">Deshabilitado</span>}
+                              {mostrarExito && <span className="text-xs text-green-400 font-bold">✓ Editado</span>}
                             </td>
                             <td className="py-2 px-4 text-center">${prod.precio}</td>
                             <td className="py-2 px-4 text-center">{prod.categoria}</td>
@@ -320,6 +339,7 @@ export default function AdminPage() {
             {/* Formulario agregar - movido abajo */}
             <div className="border-t border-stone-600 pt-6">
               <h4 className="text-lg font-bold text-stone-200 mb-4">Agregar nuevo producto</h4>
+              {success && <div className="text-green-400 mb-4 text-center font-semibold">{success}</div>}
               <div className="flex flex-col md:flex-row gap-4">
                 <input
                   type="text"
