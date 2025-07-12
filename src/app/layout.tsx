@@ -14,6 +14,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>Luis María y Cía.</title>
         <meta name="description" content="Cafetería, pastelería y delicias artesanales" />
+        <link rel="icon" href="/logo.png" type="image/png" />
+        <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className="bg-black text-white font-sans min-h-screen flex flex-col transition-colors duration-300">
         {!isCatalogPage && <Navbar />}

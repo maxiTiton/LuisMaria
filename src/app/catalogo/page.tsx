@@ -12,7 +12,7 @@ const categorias = [
   'Almuerzos / Cenas',
   'Helados',
   'Opciones Antiinflamatorias',
-  'Bebidas / Tragos'
+  'Bebidas/Tragos'
 ];
 
 // Componente separado que usa useSearchParams

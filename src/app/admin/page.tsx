@@ -18,6 +18,7 @@ export default function AdminPage() {
   const [editandoId, setEditandoId] = useState<string|null>(null);
   const [editado, setEditado] = useState({ nombre: '', precio: '', categoria: '' });
   const [filtroCategoria, setFiltroCategoria] = useState('Todos');
+  const [busqueda, setBusqueda] = useState('');
   const [error, setError] = useState('');
   const [cargandoProductos, setCargandoProductos] = useState(false);
 
@@ -178,9 +179,12 @@ export default function AdminPage() {
     }
   });
   const categoriasUnicas = ['Todos', ...Array.from(categoriasMap.values())];
-  const productosFiltrados = filtroCategoria === 'Todos'
-    ? productos
-    : productos.filter(p => normalizar(p.categoria) === normalizar(filtroCategoria));
+  // Filtrar por categoría y búsqueda
+  const productosFiltrados = productos.filter(p => {
+    const cumpleCategoria = filtroCategoria === 'Todos' || normalizar(p.categoria) === normalizar(filtroCategoria);
+    const cumpleBusqueda = busqueda === '' || normalizar(p.nombre).includes(normalizar(busqueda));
+    return cumpleCategoria && cumpleBusqueda;
+  });
 
   if (!autenticado) {
     return (
@@ -211,7 +215,7 @@ export default function AdminPage() {
     <main className="min-h-screen min-w-full flex flex-col bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-0 py-0 font-serif animate-fade-in">
       <h2 className="text-4xl font-serif font-extrabold text-stone-200 mb-8 drop-shadow-xl text-center pt-10">Panel de administración</h2>
       <div className="bg-stone-800/90 backdrop-blur-xl rounded-none p-10 shadow-2xl border border-stone-600 w-full h-full flex flex-col flex-1 overflow-auto">
-        <h3 className="text-2xl font-bold text-stone-200 mb-6">Productos</h3>
+        <h3 className="text-2xl font-bold text-stone-200 mb-6">Listado de Productos</h3>
         {/* Filtros de categoría */}
         <div className="flex flex-wrap gap-2 mb-6">
           {categoriasUnicas.map(cat => (
@@ -228,43 +232,24 @@ export default function AdminPage() {
             </button>
           ))}
         </div>
+        
+        {/* Campo de búsqueda */}
+        <div className="mb-6">
+          <input
+            type="text"
+            placeholder="Buscar por nombre..."
+            value={busqueda}
+            onChange={e => setBusqueda(e.target.value)}
+            className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-full max-w-md"
+          />
+        </div>
         {error && <div className="text-red-400 mb-4">{error}</div>}
         {cargandoProductos ? (
           <div className="text-stone-300 text-center py-8">Cargando productos...</div>
         ) : (
           <>
-            {/* Formulario agregar */}
-            <div className="flex flex-col md:flex-row gap-4 mb-8">
-              <input
-                type="text"
-                placeholder="Nombre"
-                value={nuevo.nombre}
-                onChange={e => setNuevo({ ...nuevo, nombre: e.target.value })}
-                className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif flex-1"
-              />
-              <input
-                type="number"
-                placeholder="Precio"
-                value={nuevo.precio}
-                onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
-                className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
-              />
-              <input
-                type="text"
-                placeholder="Categoría"
-                value={nuevo.categoria}
-                onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
-                className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
-              />
-              <button
-                onClick={handleAgregar}
-                className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
-              >
-                Agregar
-              </button>
-            </div>
             {/* Tabla de productos */}
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto mb-8">
               <table className="w-full text-stone-200 border-separate border-spacing-y-2">
                 <thead>
                   <tr className="bg-stone-700">
@@ -330,6 +315,40 @@ export default function AdminPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+            
+            {/* Formulario agregar - movido abajo */}
+            <div className="border-t border-stone-600 pt-6">
+              <h4 className="text-lg font-bold text-stone-200 mb-4">Agregar nuevo producto</h4>
+              <div className="flex flex-col md:flex-row gap-4">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={nuevo.nombre}
+                  onChange={e => setNuevo({ ...nuevo, nombre: e.target.value })}
+                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif flex-1"
+                />
+                <input
+                  type="number"
+                  placeholder="Precio"
+                  value={nuevo.precio}
+                  onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
+                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
+                />
+                <input
+                  type="text"
+                  placeholder="Categoría"
+                  value={nuevo.categoria}
+                  onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
+                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
+                />
+                <button
+                  onClick={handleAgregar}
+                  className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
+                >
+                  Agregar
+                </button>
+              </div>
             </div>
           </>
         )}
