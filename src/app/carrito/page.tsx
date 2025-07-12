@@ -36,15 +36,15 @@ export default function CarritoPage() {
     `%0ATotal: $${total}`;
 
   return (
-    <main className="min-h-screen bg-[#f8f5f2] py-12 font-serif animate-fade-in">
+    <main className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 py-12 font-serif animate-fade-in">
       <div className="w-full mb-8">
-        <Link href="/" className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-gradient-to-r from-[#b08a5a] to-[#6d4c2b] text-white font-semibold shadow hover:from-[#e2d6c2] hover:to-[#b08a5a] hover:text-[#6d4c2b] transition mb-4 font-serif">
+        <Link href="/" className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-stone-500 text-white font-semibold shadow-lg hover:bg-stone-600 transition mb-4 font-serif">
           <FaArrowLeft /> Volver al inicio
         </Link>
       </div>
-      <h2 className="text-4xl font-serif font-extrabold text-[#6d4c2b] mb-8 text-center drop-shadow-xl">Carrito de compra</h2>
+      <h2 className="text-4xl font-serif font-extrabold text-stone-300 mb-8 text-center drop-shadow-xl">Carrito de compra</h2>
       {carrito.length === 0 ? (
-        <p className="text-center text-[#b08a5a] text-lg font-semibold">Tu carrito está vacío.</p>
+        <p className="text-center text-white text-lg font-semibold">Tu carrito está vacío.</p>
       ) : (
         <>
           <div className="flex flex-col gap-4 w-full">
@@ -53,14 +53,14 @@ export default function CarritoPage() {
             ))}
           </div>
           <div className="mt-8 flex flex-col items-center gap-4">
-            <div className="text-2xl font-bold text-[#6d4c2b]">
-              Total: <span className="text-[#b08a5a]">${total}</span>
+            <div className="text-2xl font-bold text-white">
+              Total: <span className="text-white">${total}</span>
             </div>
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${mensaje}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-[#b08a5a] to-[#6d4c2b] text-white rounded-full font-bold text-xl shadow-xl hover:from-[#e2d6c2] hover:to-[#b08a5a] hover:text-[#6d4c2b] transition-all duration-300 hover:scale-105 font-serif"
+              className="flex items-center gap-2 px-8 py-4 bg-stone-500 text-white rounded-full font-bold text-xl shadow-xl hover:bg-stone-600 hover:shadow-2xl transition-all duration-300 hover:scale-105 font-serif"
             >
               <FaWhatsapp size={28} /> Enviar pedido por WhatsApp
             </a>

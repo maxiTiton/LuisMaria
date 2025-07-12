@@ -7,7 +7,7 @@ import UbicacionSection from '../components/UbicacionSection';
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#f8f5f2] font-serif animate-fade-in">
+    <main className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 font-serif animate-fade-in">
       <InicioSection />
       <CategoriasSection />
       <NosotrosSection />

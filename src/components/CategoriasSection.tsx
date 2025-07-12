@@ -36,29 +36,29 @@ const categorias = [
 
 export default function CategoriasSection() {
   return (
-    <section id="categorias" className="min-h-[70vh] bg-black px-4 py-20 border-b-4 border-b-[#b08a5a] animate-fade-in">
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-5xl font-serif font-extrabold text-white mb-12 text-center tracking-tight drop-shadow-xl">
+    <section id="categorias" className="min-h-[60vh] bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-4 py-12 animate-fade-in">
+      <div className="max-w-6xl mx-auto">
+        <h2 className="text-3xl font-serif font-bold text-stone-200 mb-8 text-center tracking-tight drop-shadow-xl">
           Nuestras Categorías
         </h2>
-        <p className="text-xl text-gray-300 text-center mb-16">
+        <p className="text-base text-stone-200 text-center mb-12">
           Explora nuestra variedad de productos
         </p>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 w-full max-w-6xl mx-auto">
           {categorias.map((categoria, index) => (
-            <div key={index} className="bg-black border border-[#b08a5a] rounded-2xl p-6 shadow-xl hover:scale-105 transition-all duration-300 group">
+            <div key={index} className="bg-stone-800 border border-stone-600 rounded-xl p-6 shadow-lg hover:scale-105 transition-all duration-300 group flex flex-col h-full">
               <Image
                 src={categoria.imagen}
                 alt={categoria.nombre}
                 width={200}
                 height={150}
-                className="w-full h-32 object-cover rounded-xl border-2 border-[#b08a5a] mb-4 group-hover:scale-105 transition-transform duration-300"
+                className="w-full h-32 object-cover rounded-lg border border-stone-600 mb-3 group-hover:scale-105 transition-transform duration-300"
               />
-              <h3 className="text-xl font-serif font-bold text-white mb-2 text-center">{categoria.nombre}</h3>
-              <p className="text-sm text-gray-300 text-center mb-4">{categoria.descripcion}</p>
-              <Link href={`/catalogo?categoria=${encodeURIComponent(categoria.nombre)}`}>
-                <button className="w-full px-6 py-3 bg-[#b08a5a] text-black border border-[#b08a5a] rounded-full font-bold text-lg shadow-xl hover:bg-[#8b6b3a] hover:text-white transition-all duration-300 active:scale-95 font-serif">
+              <h3 className="text-lg font-serif font-bold text-white mb-2 text-center">{categoria.nombre}</h3>
+              <p className="text-xs text-white text-center mb-3 flex-grow">{categoria.descripcion}</p>
+              <Link href={`/catalogo?categoria=${encodeURIComponent(categoria.nombre)}`} className="mt-auto">
+                <button className="w-full px-4 py-2 bg-amber-600 text-white border border-amber-400 rounded-lg font-semibold text-sm shadow-lg hover:bg-amber-700 transition-all duration-300 active:scale-95 font-serif">
                   Ver en catálogo
                 </button>
               </Link>
