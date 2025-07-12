@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import ProductoCard from '../../components/ProductoCard';
 import CarritoSidebar from '../../components/CarritoSidebar';
@@ -15,7 +15,8 @@ const categorias = [
   'Bebidas / Tragos'
 ];
 
-export default function CatalogoPage() {
+// Componente separado que usa useSearchParams
+function CatalogoContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [productos, setProductos] = useState<any[]>([]);
@@ -175,5 +176,20 @@ export default function CatalogoPage() {
       {/* Carrito sidebar - posicionado fijo */}
       {carritoAbierto && <CarritoSidebar />}
     </main>
+  );
+}
+
+// Componente principal que envuelve el contenido en Suspense
+export default function CatalogoPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 flex items-center justify-center">
+        <div className="text-center text-white text-lg">
+          Cargando catálogo...
+        </div>
+      </div>
+    }>
+      <CatalogoContent />
+    </Suspense>
   );
 } 
