@@ -22,15 +22,8 @@ export default function AdminPage() {
   const [cargandoProductos, setCargandoProductos] = useState(false);
 
   // Leer token de localStorage al cargar
-  useEffect(() => {
-    const savedToken = localStorage.getItem('admin_token');
-    if (savedToken) setToken(savedToken);
-  }, []);
 
   // Guardar token en localStorage cuando cambia
-  useEffect(() => {
-    if (token) localStorage.setItem('admin_token', token);
-  }, [token]);
 
   // Cargar productos de la API
   const fetchProductos = async () => {
@@ -166,8 +159,9 @@ export default function AdminPage() {
     return cumpleCategoria && cumpleBusqueda;
   });
 
-  // Si no hay token, pedirlo
-  if (!token) {
+  // Si no hay token correcto, pedirlo
+  const TOKEN_CORRECTO = 'LUISMARIA2024';
+  if (token !== TOKEN_CORRECTO) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-4 py-16 font-serif animate-fade-in">
         <h2 className="text-4xl font-serif font-extrabold text-stone-200 mb-4 drop-shadow-xl text-center">Token de administrador</h2>
@@ -179,7 +173,11 @@ export default function AdminPage() {
             value={token}
             onChange={e => setToken(e.target.value)}
             className="border border-stone-600 rounded-lg px-4 py-3 mb-4 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif"
+            autoFocus
           />
+          {token && token !== TOKEN_CORRECTO && (
+            <p className="text-red-400 text-sm">Token incorrecto</p>
+          )}
         </div>
       </main>
     );
