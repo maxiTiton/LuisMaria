@@ -5,7 +5,12 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
+  
+  //debug
+  //console.log("Conectando a la DB...");
+  //console.log("MONGODB_URI desde API route:", process.env.MONGODB_URI);
   await connectDB();
+  //console.log("Conectado.");
 
   // 1. Obtener los parámetros de consulta de la URL
   const { searchParams } = new URL(req.url);
