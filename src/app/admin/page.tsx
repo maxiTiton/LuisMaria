@@ -45,7 +45,7 @@ export default function AdminPage() {
 
   // Agregar producto
   const handleAgregar = async () => {
-    if (!nuevo.nombre || !nuevo.precio || !nuevo.categoria) return;
+    if (!nuevo.nombre || !nuevo.precio || (!nuevo.categoria && filtroCategoria === 'Todos')) return;
     setLoading(true);
     setError('');
     try {
@@ -154,6 +154,15 @@ export default function AdminPage() {
     const cumpleBusqueda = busqueda === '' || normalizar(p.nombre).includes(normalizar(busqueda));
     return cumpleCategoria && cumpleBusqueda;
   });
+
+  const categoriasValidas = [
+    'Desayunos / Meriendas / Brunchs',
+    'Pastelería',
+    'Almuerzos / Cenas',
+    'Helados',
+    'Opciones Antiinflamatorias',
+    'Bebidas/Tragos',
+  ];
 
   // Mostrar loading mientras se verifica la sesión
   if (isLoading) {
@@ -344,22 +353,58 @@ export default function AdminPage() {
                   onChange={e => setNuevo({ ...nuevo, nombre: e.target.value })}
                   className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif flex-1"
                 />
-                <input
-                  type="number"
-                  placeholder="Precio"
-                  value={nuevo.precio}
-                  onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
-                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
-                />
-                <input
-                  type="text"
-                  placeholder="Categoría"
-                  value={nuevo.categoria}
-                  onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
-                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
-                />
+                <div className="flex flex-col">
+                  <input
+                    type="number"
+                    placeholder="Precio"
+                    min={0}
+                    value={nuevo.precio}
+                    onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
+                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
+                  />
+                  {nuevo.precio !== '' && Number(nuevo.precio) < 0 && (
+                    <span className="text-red-400 text-xs mt-1">El precio no puede ser negativo</span>
+                  )}
+                </div>
+                {filtroCategoria === 'Todos' ? (
+                  <select
+                    value={nuevo.categoria}
+                    onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
+                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
+                  >
+                    <option value="" disabled>Categoria</option>
+                    {categoriasValidas.map(cat => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <input
+                    type="text"
+                    value={filtroCategoria}
+                    disabled
+                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-800 text-stone-400 font-serif w-40 cursor-not-allowed"
+                  />
+                )}
                 <button
-                  onClick={handleAgregar}
+                  onClick={async () => {
+                    // Validación antes de agregar
+                    if (!nuevo.nombre || !nuevo.precio || (!nuevo.categoria && filtroCategoria === 'Todos')) {
+                      setError('Completa todos los campos');
+                      return;
+                    }
+                    const precioNum = Number(nuevo.precio);
+                    if (isNaN(precioNum) || precioNum < 0) {
+                      setError('El precio no puede ser menor a 0');
+                      return;
+                    }
+                    const categoriaFinal = filtroCategoria === 'Todos' ? nuevo.categoria : filtroCategoria;
+                    if (!categoriasValidas.includes(categoriaFinal)) {
+                      setError('Categoría inválida');
+                      return;
+                    }
+                    setNuevo({ ...nuevo, categoria: categoriaFinal });
+                    await handleAgregar();
+                  }}
                   className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
                 >
                   Agregar
