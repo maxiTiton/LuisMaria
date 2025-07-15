@@ -83,9 +83,6 @@ export default function Navbar() {
         <Link href="/catalogo" className="relative font-semibold text-base px-4 py-2 rounded-lg text-stone-300 hover:text-white hover:bg-stone-600 transition-all duration-300 shadow-sm font-serif pointer-events-auto">
           Catálogo
         </Link>
-        <Link href="/admin" className="relative font-semibold text-base px-4 py-2 rounded-lg bg-stone-700 text-stone-200 border border-stone-600 shadow-lg hover:bg-stone-600 hover:text-white transition-all duration-300 active:scale-95 font-serif pointer-events-auto">
-          Iniciar sesión
-        </Link>
         <a href="https://wa.me/+5493584307111" target="_blank" rel="noopener noreferrer" className="text-amber-200 hover:text-amber-100 transition-colors duration-300 p-2 hover:bg-stone-700 rounded-lg">
           <FaWhatsapp size={20} />
         </a>
