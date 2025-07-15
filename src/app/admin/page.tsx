@@ -44,8 +44,7 @@ export default function AdminPage() {
   }, [isAdmin]);
 
   // Agregar producto
-  const handleAgregar = async () => {
-    if (!nuevo.nombre || !nuevo.precio || (!nuevo.categoria && filtroCategoria === 'Todos')) return;
+  const handleAgregar = async (productoNuevo = nuevo) => {
     setLoading(true);
     setError('');
     try {
@@ -54,10 +53,10 @@ export default function AdminPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ ...nuevo }),
+        body: JSON.stringify({ ...productoNuevo }),
       });
       if (!res.ok) throw new Error('No autorizado o error al agregar');
-      setNuevo({ nombre: '', precio: '', categoria: '' });
+      setNuevo({ nombre: '', precio: '', categoria: filtroCategoria === 'Todos' ? '' : filtroCategoria });
       const data = await res.json();
       setProductos(prev => [...prev, data.producto]);
     } catch (e) {
@@ -402,8 +401,9 @@ export default function AdminPage() {
                       setError('Categoría inválida');
                       return;
                     }
-                    setNuevo({ ...nuevo, categoria: categoriaFinal });
-                    await handleAgregar();
+                    // Asegurarse de que se envía la categoría correcta
+                    await handleAgregar({ ...nuevo, categoria: categoriaFinal });
+                    setNuevo({ nombre: '', precio: '', categoria: filtroCategoria === 'Todos' ? '' : categoriaFinal });
                   }}
                   className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
                 >
