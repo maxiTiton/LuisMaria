@@ -25,9 +25,9 @@ export async function POST(req: NextRequest) {
     const preferenceData = {
       items,
       back_urls: {
-        success: 'https://tu-sitio.com/success',
-        failure: 'https://tu-sitio.com/failure',
-        pending: 'https://tu-sitio.com/pending',
+        success: 'https://luis-maria.vercel.app/?status=success',
+        failure: 'https://luis-maria.vercel.app/?status=failure',
+        pending: 'https://luis-maria.vercel.app/?status=pending',
       },
       auto_return: 'approved',
     };
