@@ -23,7 +23,7 @@ function HomePageContent() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 font-serif animate-fade-in">
       {showThanks && (
-        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-[9999] px-8 py-4 rounded-xl shadow-2xl text-white text-lg font-semibold bg-green-700 border border-green-400 animate-fade-in">
+        <div className="fixed left-1/2 top-8 -translate-x-1/2 z-[9999] px-8 py-4 rounded-xl shadow-2xl text-white text-lg font-semibold bg-stone-900 border-2 border-amber-500 transition-all duration-300 flex items-center justify-center" style={{ minWidth: 320, maxWidth: '90vw' }}>
           ¡Gracias por tu compra! Esperamos que disfrutes nuestras delicias. Pronto nos pondremos en contacto.
         </div>
       )}
