@@ -9,26 +9,22 @@ import UbicacionSection from '../components/UbicacionSection';
 
 function HomePageContent() {
   const searchParams = useSearchParams();
-  const [status, setStatus] = useState<string | null>(null);
+  const [showThanks, setShowThanks] = useState(false);
 
   useEffect(() => {
     const s = searchParams.get('status');
-    if (s) setStatus(s);
+    if (s) {
+      setShowThanks(true);
+      const timer = setTimeout(() => setShowThanks(false), 4000);
+      return () => clearTimeout(timer);
+    }
   }, [searchParams]);
-
-  const getMensaje = () => {
-    if (status === 'success') return { color: 'bg-green-600', msg: '¡Pago realizado con éxito! Pronto nos pondremos en contacto.' };
-    if (status === 'pending') return { color: 'bg-yellow-500', msg: 'Tu pago está pendiente. Te avisaremos cuando se acredite.' };
-    if (status === 'failure') return { color: 'bg-red-600', msg: 'El pago fue rechazado o cancelado. Intenta nuevamente.' };
-    return null;
-  };
-  const mensaje = getMensaje();
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 font-serif animate-fade-in">
-      {mensaje && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 px-6 py-3 rounded-xl shadow-lg text-white text-lg font-semibold ${mensaje.color}`}>
-          {mensaje.msg}
+      {showThanks && (
+        <div className="fixed top-8 left-1/2 transform -translate-x-1/2 z-[9999] px-8 py-4 rounded-xl shadow-2xl text-white text-lg font-semibold bg-green-700 border border-green-400 animate-fade-in">
+          ¡Gracias por tu compra! Esperamos que disfrutes nuestras delicias. Pronto nos pondremos en contacto.
         </div>
       )}
       <InicioSection />
