@@ -115,6 +115,25 @@ export default function CarritoSidebar() {
 
   const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
 
+  const pagarConMercadoPago = async () => {
+    if (carrito.length === 0) return;
+    try {
+      const res = await fetch('/api/pago/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carrito }),
+      });
+      const data = await res.json();
+      if (data.init_point) {
+        window.location.href = data.init_point;
+      } else {
+        alert('Error al iniciar el pago: ' + (data.error || 'Intenta nuevamente.'));
+      }
+    } catch (err) {
+      alert('Error al conectar con Mercado Pago.');
+    }
+  };
+
   return (
     <div className="w-80 bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 border border-stone-600 fixed top-0 right-0 h-screen overflow-y-auto shadow-2xl z-50" style={{ boxShadow: '0 0 30px rgba(0, 0, 0, 0.5), 0 0 60px rgba(0, 0, 0, 0.3)' }}>
       {/* Header */}
@@ -193,13 +212,22 @@ export default function CarritoSidebar() {
             <span className="text-xl font-bold text-white">Total:</span>
             <span className="text-2xl font-bold text-amber-400">${getTotal()}</span>
           </div>
-          <button
-            onClick={enviarPorWhatsApp}
-            className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-semibold text-base hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
-          >
-            <FaWhatsapp size={18} />
-            Enviar por WhatsApp
-          </button>
+          <div className="flex flex-col gap-3">
+            <button
+              onClick={enviarPorWhatsApp}
+              className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white py-3 rounded-xl font-semibold text-base hover:from-green-700 hover:to-emerald-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              <FaWhatsapp size={18} />
+              Enviar por WhatsApp
+            </button>
+            <button
+              onClick={pagarConMercadoPago}
+              className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 text-white py-3 rounded-xl font-semibold text-base hover:from-blue-700 hover:to-cyan-700 transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
+              {/* Aquí podrías agregar un ícono de Mercado Pago si tienes uno */}
+              Pagar con Mercado Pago
+            </button>
+          </div>
         </div>
       )}
     </div>
