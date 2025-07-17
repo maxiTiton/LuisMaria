@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import InicioSection from '../components/InicioSection';
 import CategoriasSection from '../components/CategoriasSection';
@@ -7,7 +7,7 @@ import NosotrosSection from '../components/NosotrosSection';
 import ContactoSection from '../components/ContactoSection';
 import UbicacionSection from '../components/UbicacionSection';
 
-export default function HomePage() {
+function HomePageContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<string | null>(null);
 
@@ -37,5 +37,13 @@ export default function HomePage() {
       <ContactoSection />
       <UbicacionSection />
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense>
+      <HomePageContent />
+    </Suspense>
   );
 } 
