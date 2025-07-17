@@ -1,8 +1,7 @@
 import ProductoCard from './ProductoCard';
 
 async function getProductos() {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-  const res = await fetch(`${baseUrl}/api/productos`, { cache: 'no-store' });
+  const res = await fetch('/api/productos', { cache: 'no-store' });
   return res.json();
 }
 
