@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
+import type { Pedido as PedidoType } from '@/models/Pedido';
 
 type Producto = {
   _id: string;
@@ -21,6 +22,10 @@ export default function AdminPage() {
   const [busqueda, setBusqueda] = useState('');
   const [error, setError] = useState('');
   const [cargandoProductos, setCargandoProductos] = useState(false);
+  const [mostrarPedidos, setMostrarPedidos] = useState(false);
+  const [pedidos, setPedidos] = useState<PedidoType[]>([]);
+  const [cargandoPedidos, setCargandoPedidos] = useState(false);
+  const [errorPedidos, setErrorPedidos] = useState('');
 
   // Cargar productos de la API
   const fetchProductos = async () => {
@@ -42,6 +47,26 @@ export default function AdminPage() {
       fetchProductos();
     }
   }, [isAdmin]);
+
+  const fetchPedidos = async () => {
+    setCargandoPedidos(true);
+    setErrorPedidos('');
+    try {
+      const res = await fetch('/api/pedidos');
+      const data = await res.json();
+      setPedidos(data.pedidos || []);
+    } catch (e) {
+      setErrorPedidos('Error al cargar pedidos');
+    } finally {
+      setCargandoPedidos(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAdmin && mostrarPedidos) {
+      fetchPedidos();
+    }
+  }, [isAdmin, mostrarPedidos]);
 
   // Agregar producto
   const handleAgregar = async (productoNuevo = nuevo) => {
@@ -224,196 +249,272 @@ export default function AdminPage() {
 
   // Panel de administración para el admin autenticado
   return (
-    <main className="min-h-screen min-w-full flex flex-col bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-0 py-0 font-serif animate-fade-in">
-      <div className="bg-stone-800/90 backdrop-blur-xl rounded-none p-10 shadow-2xl border border-stone-600 w-full h-full flex flex-col flex-1 overflow-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h2 className="text-4xl font-serif font-extrabold text-stone-200 mb-2 drop-shadow-xl">Panel de administración</h2>
-            <p className="text-stone-400">Bienvenido, {session.user?.name}</p>
-          </div>
-          <button
-            onClick={handleSignOut}
-            className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-all duration-300"
-          >
-            Cerrar sesión
-          </button>
+    <main className="min-h-screen bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-4 py-8 font-serif animate-fade-in">
+      {/* Encabezado fijo */}
+      <div className="flex flex-col md:flex-row items-center justify-between bg-stone-900/90 border border-stone-700 rounded-2xl px-8 py-6 mb-10 shadow-lg">
+        <div>
+          <h2 className="text-4xl font-serif font-extrabold text-stone-200 mb-2 drop-shadow-xl">Panel de administración</h2>
+          <p className="text-stone-400 text-lg">Bienvenido, {session?.user?.name}</p>
         </div>
-        
-        <h3 className="text-2xl font-bold text-stone-200 mb-6">Listado de Productos</h3>
-        {/* Filtros de categoría */}
-        <div className="flex flex-wrap gap-2 mb-6">
-          {categoriasUnicas.map(cat => (
-            <button
-              key={cat}
-              onClick={() => setFiltroCategoria(cat)}
-              className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 font-serif border shadow-sm ${
-                normalizar(filtroCategoria) === normalizar(cat)
-                  ? 'bg-amber-600 text-white border-amber-500'
-                  : 'bg-stone-700 text-stone-200 border-stone-600 hover:bg-amber-600 hover:text-white hover:border-amber-500'
-              }`}
-            >
-              {cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </button>
-          ))}
-        </div>
-        
-        {/* Campo de búsqueda */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Buscar por nombre..."
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-full max-w-md"
-          />
-        </div>
-        {error && <div className="text-red-400 mb-4">{error}</div>}
-        {cargandoProductos ? (
-          <div className="text-stone-300 text-center py-8">Cargando productos...</div>
-        ) : (
-          <>
-            {/* Tabla de productos */}
-            <div className="overflow-x-auto mb-8">
-              <table className="w-full text-stone-200 border-separate border-spacing-y-2">
-                <thead>
-                  <tr className="bg-stone-700">
-                    <th className="py-2 px-4 rounded-l-lg text-center">Nombre</th>
-                    <th className="py-2 px-4 text-center">Precio</th>
-                    <th className="py-2 px-4 text-center">Categoría</th>
-                    <th className="py-2 px-4 rounded-r-lg text-center">Acciones</th>
+        <button
+          onClick={handleSignOut}
+          className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-all duration-300 text-lg mt-6 md:mt-0"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+
+      {/* Botón para alternar entre productos y pedidos */}
+      <div className="flex justify-center mb-8 gap-4">
+        <button
+          className={`px-6 py-2 rounded-lg font-bold text-lg transition-all duration-200 ${!mostrarPedidos ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-200 border border-stone-600'}`}
+          onClick={() => setMostrarPedidos(false)}
+        >
+          Productos
+        </button>
+        <button
+          className={`px-6 py-2 rounded-lg font-bold text-lg transition-all duration-200 ${mostrarPedidos ? 'bg-amber-600 text-white' : 'bg-stone-800 text-stone-200 border border-stone-600'}`}
+          onClick={() => setMostrarPedidos(true)}
+        >
+          Pedidos
+        </button>
+      </div>
+
+      {/* Sección de pedidos */}
+      {mostrarPedidos && (
+        <section className="max-w-5xl mx-auto bg-stone-900/80 rounded-2xl p-6 shadow-xl border border-stone-700 mb-12">
+          <h2 className="text-3xl font-bold mb-6 text-amber-500">Pedidos</h2>
+          {cargandoPedidos ? (
+            <div className="text-center text-stone-300">Cargando pedidos...</div>
+          ) : errorPedidos ? (
+            <div className="text-center text-red-400">{errorPedidos}</div>
+          ) : pedidos.length === 0 ? (
+            <div className="text-center text-stone-400">No hay pedidos registrados.</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full border border-stone-700 rounded-xl overflow-hidden">
+                <thead className="bg-stone-800">
+                  <tr>
+                    <th className="px-4 py-2 text-left">Fecha</th>
+                    <th className="px-4 py-2 text-left">Estado</th>
+                    <th className="px-4 py-2 text-left">Total</th>
+                    <th className="px-4 py-2 text-left">Comprador</th>
+                    <th className="px-4 py-2 text-left">Productos</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {productosFiltrados.map(prod => {
-                    const estaHabilitado = prod.habilitado !== false;
-                    return (
-                      <tr key={prod._id} className={`bg-stone-900/80 ${!estaHabilitado ? 'opacity-50' : ''}`}> 
-                        {editandoId === prod._id ? (
-                          <>
-                            <td className="py-2 px-4 text-center">
-                              <input
-                                type="text"
-                                value={editado.nombre}
-                                onChange={e => setEditado({ ...editado, nombre: e.target.value })}
-                                className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
-                              />
-                            </td>
-                            <td className="py-2 px-4 text-center">
-                              <input
-                                type="number"
-                                value={editado.precio}
-                                onChange={e => setEditado({ ...editado, precio: e.target.value })}
-                                className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
-                              />
-                            </td>
-                            <td className="py-2 px-4 text-center">
-                              <input
-                                type="text"
-                                value={editado.categoria}
-                                onChange={e => setEditado({ ...editado, categoria: e.target.value })}
-                                className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
-                              />
-                            </td>
-                            <td className="py-2 px-4 flex gap-2 justify-center">
-                              <button onClick={() => handleGuardar(prod._id)} className="px-3 py-1 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all">Guardar</button>
-                              <button onClick={handleCancelar} className="px-3 py-1 bg-stone-700 text-stone-200 rounded-lg font-bold hover:bg-stone-600 transition-all">Cancelar</button>
-                            </td>
-                          </>
-                        ) : (
-                          <>
-                            <td className="py-2 px-4 text-center flex flex-col gap-1 items-center justify-center">
-                              {prod.nombre}
-                              {!estaHabilitado && <span className="text-xs text-red-400 font-bold">Deshabilitado</span>}
-                            </td>
-                            <td className="py-2 px-4 text-center">${prod.precio}</td>
-                            <td className="py-2 px-4 text-center">{prod.categoria}</td>
-                            <td className="py-2 px-4 flex gap-2 justify-center">
-                              <button onClick={() => handleEditar(prod)} className="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all">Editar</button>
-                              <button onClick={() => handleEliminar(prod._id)} className="px-3 py-1 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-all">Eliminar</button>
-                              <button onClick={() => handleToggleHabilitado(prod)} className={`px-3 py-1 rounded-lg font-bold transition-all ${estaHabilitado ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-green-600 text-white hover:bg-green-700'}`}>{estaHabilitado ? 'Deshabilitar' : 'Habilitar'}</button>
-                            </td>
-                          </>
-                        )}
-                      </tr>
-                    );
-                  })}
+                  {pedidos.map((pedido) => (
+                    <tr key={pedido._id} className="border-b border-stone-700 hover:bg-stone-800/60 transition-all">
+                      <td className="px-4 py-2 text-stone-200">{new Date(pedido.fecha).toLocaleString()}</td>
+                      <td className="px-4 py-2">
+                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${pedido.estadoPago === 'aprobado' ? 'bg-green-700 text-white' : pedido.estadoPago === 'pendiente' ? 'bg-yellow-600 text-white' : 'bg-red-700 text-white'}`}>{pedido.estadoPago}</span>
+                      </td>
+                      <td className="px-4 py-2 text-amber-400 font-bold">${pedido.total}</td>
+                      <td className="px-4 py-2 text-stone-300">
+                        {pedido.comprador?.nombre}<br/>
+                        <span className="text-xs text-stone-400">{pedido.comprador?.email}</span><br/>
+                        <span className="text-xs text-stone-400">{pedido.comprador?.telefono}</span>
+                      </td>
+                      <td className="px-4 py-2 text-stone-200">
+                        <ul className="list-disc pl-4">
+                          {pedido.productos.map((prod, idx) => (
+                            <li key={prod.id || idx}>
+                              {prod.cantidad} x {prod.nombre} (${prod.precio})
+                            </li>
+                          ))}
+                        </ul>
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
+          )}
+        </section>
+      )}
+
+      {/* Sección de productos (solo si no está mostrando pedidos) */}
+      {!mostrarPedidos && (
+        <main className="min-h-screen min-w-full flex flex-col bg-gradient-to-br from-stone-900 via-neutral-900 to-zinc-900 px-0 py-0 font-serif animate-fade-in">
+          <div className="bg-stone-800/90 backdrop-blur-xl rounded-none p-10 shadow-2xl border border-stone-600 w-full h-full flex flex-col flex-1 overflow-auto">
             
-            {/* Formulario agregar - movido abajo */}
-            <div className="border-t border-stone-600 pt-6">
-              <h4 className="text-lg font-bold text-stone-200 mb-4">Agregar nuevo producto</h4>
-              <div className="flex flex-col md:flex-row gap-4">
-                <input
-                  type="text"
-                  placeholder="Nombre"
-                  value={nuevo.nombre}
-                  onChange={e => setNuevo({ ...nuevo, nombre: e.target.value })}
-                  className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif flex-1"
-                />
-                <div className="flex flex-col">
-                  <input
-                    type="number"
-                    placeholder="Precio"
-                    min={0}
-                    value={nuevo.precio}
-                    onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
-                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
-                  />
-                  {nuevo.precio !== '' && Number(nuevo.precio) < 0 && (
-                    <span className="text-red-400 text-xs mt-1">El precio no puede ser negativo</span>
-                  )}
-                </div>
-                {filtroCategoria === 'Todos' ? (
-                  <select
-                    value={nuevo.categoria}
-                    onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
-                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
-                  >
-                    <option value="" disabled>Categoria</option>
-                    {categoriasValidas.map(cat => (
-                      <option key={cat} value={cat}>{cat}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    value={filtroCategoria}
-                    disabled
-                    className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-800 text-stone-400 font-serif w-40 cursor-not-allowed"
-                  />
-                )}
+            <h3 className="text-2xl font-bold text-stone-200 mb-6">Listado de Productos</h3>
+            {/* Filtros de categoría */}
+            <div className="flex flex-wrap gap-2 mb-6">
+              {categoriasUnicas.map(cat => (
                 <button
-                  onClick={async () => {
-                    // Validación antes de agregar
-                    if (!nuevo.nombre || !nuevo.precio || (!nuevo.categoria && filtroCategoria === 'Todos')) {
-                      setError('Completa todos los campos');
-                      return;
-                    }
-                    const precioNum = Number(nuevo.precio);
-                    if (isNaN(precioNum) || precioNum < 0) {
-                      setError('El precio no puede ser menor a 0');
-                      return;
-                    }
-                    const categoriaFinal = filtroCategoria === 'Todos' ? nuevo.categoria : filtroCategoria;
-                    if (!categoriasValidas.includes(categoriaFinal)) {
-                      setError('Categoría inválida');
-                      return;
-                    }
-                    // Asegurarse de que se envía la categoría correcta
-                    await handleAgregar({ ...nuevo, categoria: categoriaFinal });
-                    setNuevo({ nombre: '', precio: '', categoria: filtroCategoria === 'Todos' ? '' : categoriaFinal });
-                  }}
-                  className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
+                  key={cat}
+                  onClick={() => setFiltroCategoria(cat)}
+                  className={`px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 font-serif border shadow-sm ${
+                    normalizar(filtroCategoria) === normalizar(cat)
+                      ? 'bg-amber-600 text-white border-amber-500'
+                      : 'bg-stone-700 text-stone-200 border-stone-600 hover:bg-amber-600 hover:text-white hover:border-amber-500'
+                  }`}
                 >
-                  Agregar
+                  {cat.charAt(0).toUpperCase() + cat.slice(1)}
                 </button>
-              </div>
+              ))}
             </div>
-          </>
-        )}
-      </div>
+            
+            {/* Campo de búsqueda */}
+            <div className="mb-6">
+              <input
+                type="text"
+                placeholder="Buscar por nombre..."
+                value={busqueda}
+                onChange={e => setBusqueda(e.target.value)}
+                className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-full max-w-md"
+              />
+            </div>
+            {error && <div className="text-red-400 mb-4">{error}</div>}
+            {cargandoProductos ? (
+              <div className="text-stone-300 text-center py-8">Cargando productos...</div>
+            ) : (
+              <>
+                {/* Tabla de productos */}
+                <div className="overflow-x-auto mb-8">
+                  <table className="w-full text-stone-200 border-separate border-spacing-y-2">
+                    <thead>
+                      <tr className="bg-stone-700">
+                        <th className="py-2 px-4 rounded-l-lg text-center">Nombre</th>
+                        <th className="py-2 px-4 text-center">Precio</th>
+                        <th className="py-2 px-4 text-center">Categoría</th>
+                        <th className="py-2 px-4 rounded-r-lg text-center">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {productosFiltrados.map(prod => {
+                        const estaHabilitado = prod.habilitado !== false;
+                        return (
+                          <tr key={prod._id} className={`bg-stone-900/80 ${!estaHabilitado ? 'opacity-50' : ''}`}> 
+                            {editandoId === prod._id ? (
+                              <>
+                                <td className="py-2 px-4 text-center">
+                                  <input
+                                    type="text"
+                                    value={editado.nombre}
+                                    onChange={e => setEditado({ ...editado, nombre: e.target.value })}
+                                    className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
+                                  />
+                                </td>
+                                <td className="py-2 px-4 text-center">
+                                  <input
+                                    type="number"
+                                    value={editado.precio}
+                                    onChange={e => setEditado({ ...editado, precio: e.target.value })}
+                                    className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
+                                  />
+                                </td>
+                                <td className="py-2 px-4 text-center">
+                                  <input
+                                    type="text"
+                                    value={editado.categoria}
+                                    onChange={e => setEditado({ ...editado, categoria: e.target.value })}
+                                    className="border border-stone-600 rounded-lg px-2 py-1 bg-stone-800 text-stone-200 w-full"
+                                  />
+                                </td>
+                                <td className="py-2 px-4 flex gap-2 justify-center">
+                                  <button onClick={() => handleGuardar(prod._id)} className="px-3 py-1 bg-green-600 text-white rounded-lg font-bold hover:bg-green-700 transition-all">Guardar</button>
+                                  <button onClick={handleCancelar} className="px-3 py-1 bg-stone-700 text-stone-200 rounded-lg font-bold hover:bg-stone-600 transition-all">Cancelar</button>
+                                </td>
+                              </>
+                            ) : (
+                              <>
+                                <td className="py-2 px-4 text-center flex flex-col gap-1 items-center justify-center">
+                                  {prod.nombre}
+                                  {!estaHabilitado && <span className="text-xs text-red-400 font-bold">Deshabilitado</span>}
+                                </td>
+                                <td className="py-2 px-4 text-center">${prod.precio}</td>
+                                <td className="py-2 px-4 text-center">{prod.categoria}</td>
+                                <td className="py-2 px-4 flex gap-2 justify-center">
+                                  <button onClick={() => handleEditar(prod)} className="px-3 py-1 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-all">Editar</button>
+                                  <button onClick={() => handleEliminar(prod._id)} className="px-3 py-1 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-all">Eliminar</button>
+                                  <button onClick={() => handleToggleHabilitado(prod)} className={`px-3 py-1 rounded-lg font-bold transition-all ${estaHabilitado ? 'bg-stone-700 text-stone-200 hover:bg-stone-600' : 'bg-green-600 text-white hover:bg-green-700'}`}>{estaHabilitado ? 'Deshabilitar' : 'Habilitar'}</button>
+                                </td>
+                              </>
+                            )}
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Formulario agregar - movido abajo */}
+                <div className="border-t border-stone-600 pt-6">
+                  <h4 className="text-lg font-bold text-stone-200 mb-4">Agregar nuevo producto</h4>
+                  <div className="flex flex-col md:flex-row gap-4">
+                    <input
+                      type="text"
+                      placeholder="Nombre"
+                      value={nuevo.nombre}
+                      onChange={e => setNuevo({ ...nuevo, nombre: e.target.value })}
+                      className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif flex-1"
+                    />
+                    <div className="flex flex-col">
+                      <input
+                        type="number"
+                        placeholder="Precio"
+                        min={0}
+                        value={nuevo.precio}
+                        onChange={e => setNuevo({ ...nuevo, precio: e.target.value })}
+                        className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-32"
+                      />
+                      {nuevo.precio !== '' && Number(nuevo.precio) < 0 && (
+                        <span className="text-red-400 text-xs mt-1">El precio no puede ser negativo</span>
+                      )}
+                    </div>
+                    {filtroCategoria === 'Todos' ? (
+                      <select
+                        value={nuevo.categoria}
+                        onChange={e => setNuevo({ ...nuevo, categoria: e.target.value })}
+                        className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-900 text-stone-200 focus:outline-none focus:ring-2 focus:ring-amber-600 font-serif w-40"
+                      >
+                        <option value="" disabled>Categoria</option>
+                        {categoriasValidas.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={filtroCategoria}
+                        disabled
+                        className="border border-stone-600 rounded-lg px-4 py-2 bg-stone-800 text-stone-400 font-serif w-40 cursor-not-allowed"
+                      />
+                    )}
+                    <button
+                      onClick={async () => {
+                        // Validación antes de agregar
+                        if (!nuevo.nombre || !nuevo.precio || (!nuevo.categoria && filtroCategoria === 'Todos')) {
+                          setError('Completa todos los campos');
+                          return;
+                        }
+                        const precioNum = Number(nuevo.precio);
+                        if (isNaN(precioNum) || precioNum < 0) {
+                          setError('El precio no puede ser menor a 0');
+                          return;
+                        }
+                        const categoriaFinal = filtroCategoria === 'Todos' ? nuevo.categoria : filtroCategoria;
+                        if (!categoriasValidas.includes(categoriaFinal)) {
+                          setError('Categoría inválida');
+                          return;
+                        }
+                        // Asegurarse de que se envía la categoría correcta
+                        await handleAgregar({ ...nuevo, categoria: categoriaFinal });
+                        setNuevo({ nombre: '', precio: '', categoria: filtroCategoria === 'Todos' ? '' : categoriaFinal });
+                      }}
+                      className="px-6 py-2 bg-green-600 text-white border border-green-700 rounded-lg font-bold shadow-lg hover:bg-green-700 transition-all duration-300 active:scale-95 font-serif"
+                    >
+                      Agregar
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </main>
+      )}
     </main>
   );
 } 
