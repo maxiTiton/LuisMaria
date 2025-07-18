@@ -1,7 +1,28 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
-import type { Pedido as PedidoType } from '@/models/Pedido';
+
+type PedidoType = {
+  _id: string;
+  productos: {
+    id: string;
+    nombre: string;
+    cantidad: number;
+    precio: number;
+    categoria: string;
+    imagen?: string;
+    _id?: string;
+  }[];
+  total: number;
+  estadoPago: string;
+  fecha: string;
+  comprador?: {
+    nombre?: string;
+    email?: string;
+    telefono?: string;
+  };
+  idPagoMP: string;
+};
 
 type Producto = {
   _id: string;
