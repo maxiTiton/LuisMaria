@@ -11,6 +11,11 @@ module.exports = {
         secondary: '#795548', // marrón acento
         black: '#000',
         white: '#fff',
+        crema: '#f8f5f2',
+        marron: '#7c4f2c',
+        marronOscuro: '#4e2e1e',
+        dorado: '#e6b980',
+        doradoSuave: '#f3e1c7',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

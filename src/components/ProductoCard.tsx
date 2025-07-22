@@ -3,14 +3,12 @@ import Image from 'next/image';
 import { useState } from 'react';
 
 const categoriaToImg: Record<string, string> = {
-  cafe: '/images/cafe.png',
-  torta: '/images/torta.png',
-  helado: '/images/helado.png',
-  tostadas: '/images/tostadas.png',
-  // Variaciones para ser más flexible
-  helados: '/images/helado.png',
-  tortas: '/images/torta.png',
-  cafes: '/images/cafe.png',
+  'desayunos / meriendas / brunchs': '/images/desayuno.jpg',
+  'pastelería': '/images/torta.png',
+  'almuerzos / cenas': '/images/tostadas.png',
+  'helados': '/images/helado.png',
+  'opciones antiinflamatorias': '/images/opcionAntiimflamatoria.jpg',
+  'bebidas/tragos': '/images/licuado.jpeg',
 };
 
 export default function ProductoCard({ producto }: { producto: any }) {
@@ -36,22 +34,17 @@ export default function ProductoCard({ producto }: { producto: any }) {
   // Lógica mejorada para encontrar la imagen
   const getImageSrc = (categoria: string) => {
     if (producto.imagen) return producto.imagen;
-    
-    const categoriaLower = categoria?.toLowerCase() || '';
-    
-    // Buscar coincidencia exacta primero
+    const categoriaLower = categoria?.toLowerCase().trim() || '';
     if (categoriaToImg[categoriaLower]) {
       return categoriaToImg[categoriaLower];
     }
-    
     // Buscar coincidencia parcial
     for (const [key, value] of Object.entries(categoriaToImg)) {
       if (categoriaLower.includes(key) || key.includes(categoriaLower)) {
         return value;
       }
     }
-    
-    return '/images/cafe.png'; // Imagen por defecto
+    return '/images/desayuno.jpg'; // Imagen por defecto
   };
 
   const imgSrc = getImageSrc(producto.categoria);
