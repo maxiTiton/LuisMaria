@@ -2,7 +2,6 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from './Navbar';
-import Footer from './Footer';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,7 +13,6 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
       <main className="flex-1">
         {children}
       </main>
-      <Footer />
     </>
   );
 } 

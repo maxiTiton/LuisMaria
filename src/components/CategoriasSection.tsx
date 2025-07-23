@@ -44,7 +44,7 @@ export default function CategoriasSection() {
         <p className="text-base text-doradoSuave text-center mb-12">
           Explora nuestra variedad de productos
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-6xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-8 w-full max-w-5xl mx-auto">
           {categorias.map((categoria, index) => (
             <div key={index} className="bg-crema border-2 border-dorado rounded-2xl p-6 shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300 group flex flex-col h-full items-center">
               <Image

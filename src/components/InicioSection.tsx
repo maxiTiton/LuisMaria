@@ -13,6 +13,9 @@ export default function InicioSection() {
       />
       {/* Overlay sobrio y elegante, más transparente para mayor nitidez */}
       <div className="absolute inset-0 bg-marronOscuro/60 z-10" />
+      
+      {/* Gradiente de transición suave en la parte inferior */}
+      <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-[#2d1a10] to-transparent z-15" />
       {/* Contenido principal */}
       <div className="relative z-20 flex flex-col items-center justify-center text-center px-4">
         <Image
